@@ -9,6 +9,7 @@ RECEIVER = 'programmingofficialacc@gmail.com'
 
 
 def send_email(image_path):
+    print("Send Email Function Started!")
     email_message = EmailMessage()
     email_message["Subject"] = "New customer showed up!"
     email_message.set_content("Hey, we just saw a new customer!")
@@ -26,7 +27,9 @@ def send_email(image_path):
     gmail.login(SENDER, PASSWORD)
     gmail.sendmail(SENDER, RECEIVER, email_message.as_string())
     gmail.quit()
+    print("Send Email Function Ended!")
 
 
+# Following code runs only when this .py is executed not when called by another .py file
 if __name__ == "__main__":
     send_email("images/24.png")
