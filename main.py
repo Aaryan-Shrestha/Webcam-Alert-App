@@ -1,3 +1,4 @@
+import glob
 import cv2
 import time
 from emailing import send_email
@@ -7,6 +8,7 @@ time.sleep(1)
 
 first_frame = None
 status_list = []
+count = 1
 
 while True:
     status = 0
@@ -20,6 +22,7 @@ while True:
     delta_frame = cv2.absdiff(first_frame, gray_frame_gau)
     thresh_frame = cv2.threshold(delta_frame, 60, 255, cv2.THRESH_BINARY)[1]
     dil_frame = cv2.dilate(thresh_frame, None, iterations=2)
+    cv2.imshow("Dil Frame", dil_frame)
 
     contours, check = cv2.findContours(dil_frame, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
@@ -30,12 +33,18 @@ while True:
         rectangle = cv2.rectangle(img=frame, pt1=(x,y), pt2=(x+w, y+h), color=(0, 255, 0), thickness=3)
         if rectangle.any():
             status = 1
+            cv2.imwrite(f"images/{count}.png", frame)
+            count = count + 1
+            all_images = glob.glob("images/*.png")
+            index = int(len(all_images) / 2)
+            image_with_object = all_images[index]
+
 
     status_list.append(status)
     status_list = status_list[-2:]
 
     if status_list[0] == 1 and status_list[1] == 0:
-        send_email()
+        send_email(image_with_object)
 
     cv2.imshow("Video", frame)
 
